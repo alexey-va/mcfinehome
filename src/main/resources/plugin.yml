@@ -1,0 +1,34 @@
+name: McfineHome
+version: ${project.version}
+main: com.mcfine.mcfinehome.McfineHome
+api-version: 1.16
+authors: [ Alexey ]
+description: Home plugin with invite option
+website: mcfine.ru
+commands:
+  home:
+    description: Телепортирует вас домой.
+    aliases:
+      - hm
+    permission: mcfine.home
+    permission-message: У вас нет доступа к данной команде!
+  sethome:
+    description: Устанавливает точку дома.
+    permission: mcfine.home
+    permission-message: У вас нет доступа к данной команде!
+  delhome:
+    description: Удаляет точку дома.
+    permission: mcfine.home
+    permission-message: У вас нет доступа к данной команде!
+  home-of:
+    description: Телепортация в дом другого игрока.
+    permission: mcfine.home
+    permission-message: У вас нет доступа к данной команде!
+permissions:
+  mcfine.home:
+    description: Allows plugin use.
+    default: true
+  mcfine.home.2:
+    description: Allows 2 homes.
+    default: true
+

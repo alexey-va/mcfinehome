@@ -1,0 +1,4 @@
+publicByDeafult: false
+bedSetsHome: true
+onlyBedSetsHome: false
+maxNumberOfHomes: 10
