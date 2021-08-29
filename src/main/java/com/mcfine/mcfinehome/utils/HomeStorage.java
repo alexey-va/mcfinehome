@@ -41,7 +41,7 @@ public class HomeStorage {
                     return home;
                 }
         }
-        McfineHome.getPlugin().getLogger().info("[Home] Home was not found by player name: "+name);
+        McfineHome.getPlugin().getLogger().info("Home was not found by player name: "+name);
         return null;
     }
 
@@ -88,7 +88,7 @@ public class HomeStorage {
                     return home;
                 }
         }
-        McfineHome.getPlugin().getLogger().info("[Home] No home was not found by UID: "+uid);
+        McfineHome.getPlugin().getLogger().info("No home was not found by UID: "+uid);
         return null;
     }
 
@@ -98,7 +98,7 @@ public class HomeStorage {
                 return home;
             }
         }
-        McfineHome.getPlugin().getLogger().info("[Home] No home was not found by UID: "+uid);
+        McfineHome.getPlugin().getLogger().info("No home was not found by UID: "+uid);
         return null;
     }
 
@@ -129,7 +129,7 @@ public class HomeStorage {
                 break;
             }
         }
-        McfineHome.getPlugin().getLogger().info("[Home] Error deleting home by NAME: "+name);
+        McfineHome.getPlugin().getLogger().info("Error deleting home by NAME: "+name);
     }
 
 
@@ -182,7 +182,7 @@ public class HomeStorage {
         gson.toJson(homeSet,writer);
         writer.flush();
         writer.close();
-        McfineHome.getPlugin().getLogger().info("[Home] Data saved");
+        McfineHome.getPlugin().getLogger().info("Data saved");
     }
 
 
@@ -193,7 +193,7 @@ public class HomeStorage {
             Reader reader = new FileReader(file);
             Home[] n =gson.fromJson(reader, Home[].class);
             homeSet = new ArrayList<>(Arrays.asList(n));
-            McfineHome.getPlugin().getLogger().info("[Home] Data uploaded");
+            McfineHome.getPlugin().getLogger().info("Data uploaded");
         }
     }
 

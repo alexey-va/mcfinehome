@@ -19,6 +19,10 @@ public class HomeofCommand implements CommandExecutor {
 
         if(sender instanceof Player){
             Player p = (Player)sender;
+            if(args.length>=1 && args[0].trim().equalsIgnoreCase(p.getName())){
+                p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &eplaceholder"));
+                return false;
+            }
             if(args.length==1){
                 Home hm = HomeStorage.getHomeByName(args[0].toLowerCase(Locale.ROOT).trim(),"Main");
                 if(Objects.isNull(hm)){
@@ -45,6 +49,8 @@ public class HomeofCommand implements CommandExecutor {
                         } catch(Exception ex) {
                             ex.printStackTrace();
                         }
+                    } else{
+                        p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &eВы не приглашены в этот дом"));
                     }
                 }
             } else if(args.length==2){
