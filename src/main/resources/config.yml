@@ -2,3 +2,7 @@ publicByDeafult: false
 bedSetsHome: true
 onlyBedSetsHome: false
 maxNumberOfHomes: 10
+menu-name: '                &9&lДома'
+#may be from 1 to 6!!!
+row-amount: 4
+home-menu-name: '&6&l               Меню Дома'

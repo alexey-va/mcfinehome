@@ -10,6 +10,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -71,6 +72,7 @@ public class HomeCommand implements CommandExecutor {
                 if (args.length == 2) {
                     if (args2[1].trim().equals(p.getName())) {
                         p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &6Это ваш ник!"));
+                        return false;
                     }
                     Home home = HomeStorage.getHomeByName(p.getName(), "Main");
 
@@ -81,14 +83,20 @@ public class HomeCommand implements CommandExecutor {
                         tmp.add(args2[1].trim());
                         home.setInvitedNames(tmp);
                         HomeStorage.replaceHome(p.getUniqueId().toString(), home, "Main");
-                        p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &eИгрок &6" + args2[1] + " &eприглашен!"));
+                        p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &eИгрок &6" + args[1] + " &eприглашен!"));
+                        Player p2=McfineHome.getPlugin().getServer().getPlayerExact(args[1]);
+                        if(Objects.nonNull(p2)){
+                            if(p2.isOnline()){
+                                p2.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &eИгрок &6" +p.getName()+" &eпригласил вас к себе домой.\n Напишите &6/home "+p2.getName()+" &eдля телепортации"));
+                            }
+                        }
                         return false;
                     }
                 } else if (args.length > 2) {
                     p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &cСлишком много аргументов!"));
                     return false;
                 } else {
-                    p.sendMessage(ColorTranslator.translateColorCodes("&9/home invite [Ник]     &6-  &6Пригласить домой"));
+                    p.sendMessage(ColorTranslator.translateColorCodes("&9/home invite &7<Ник>     &6-  &6Пригласить домой"));
                     return false;
                 }
             } else if (args[0].equals("uninvite")) {
@@ -219,7 +227,10 @@ public class HomeCommand implements CommandExecutor {
                     }
                 }
                 return false;
-            } else if (args.length == 1) {
+            } else if(args.length==1 && args[0].equalsIgnoreCase("invitedme")){
+                printInvitedmeNames(p);
+            }
+            else if (args.length == 1) {
 
                 Home hm = HomeStorage.getHomeByName(p.getName(), args[0].toLowerCase(Locale.ROOT).trim());
                 if (Objects.nonNull(hm)) {
@@ -237,6 +248,10 @@ public class HomeCommand implements CommandExecutor {
                 }
                 if (home.isPubl() || home.isInvited(p.getName())) {
                     if (Teleporter.tryTp(p, home.getLocation())) {
+                        if(home.getHomeName().equalsIgnoreCase("Main")){
+                            p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &eВы телепортировались в дом &6" + home.getPlayerName()));
+                            return false;
+                        }
                         p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &eВы телепортировались в дом: &6" + home.getHomeName() + " &eигрока: &6" + home.getPlayerName()));
                     }
                 } else {
@@ -313,7 +328,6 @@ public class HomeCommand implements CommandExecutor {
                     break;
                 }
             }
-            p.sendMessage(max + "");
             if (HomeStorage.getHomeNumber(p.getUniqueId().toString()) < max) {
                 if (args[1].equals("invite") || args[1].equals("set") || args[1].equals("delete") || args[1].equals("invited") || args[1].equals("uninvite") || args[1].equals("private") || args[1].equals("public") || args[1].equals("help") || args[1].equals("rename")) {
                     p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &cЭто имя зарезервированно! Используйте другое"));
@@ -341,4 +355,27 @@ public class HomeCommand implements CommandExecutor {
 
         }
     }
+
+    public static void printInvitedmeNames(Player p){
+        ArrayList<Home> tmp=HomeStorage.getHomeSet();
+        StringBuilder homesBuilder = new StringBuilder("&9Home &7▪ &eВы приглашены к: &6");
+        boolean any=false;
+        ArrayList<String> players = new ArrayList<>();
+        for(Home hm : tmp){
+            if(hm.isInvited(p.getName()) && !hm.getPlayerName().equalsIgnoreCase(p.getName()) && !players.contains(hm.getPlayerName())) {
+                any=true;
+                homesBuilder.append(hm.getPlayerName()).append("&e, &6");
+                players.add(hm.getPlayerName());
+            }
+        }
+        String homes = homesBuilder.toString();
+        if(!any){
+            p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &cВас еще никто не пригласил"));
+        } else{
+            homes = homes.substring(0, homes.length() - 4);
+            p.sendMessage(ColorTranslator.translateColorCodes(homes));
+        }
+    }
+
+
 }

@@ -1,19 +1,19 @@
 package com.mcfine.mcfinehome;
 
-import com.mcfine.mcfinehome.commands.DelhomeCommand;
-import com.mcfine.mcfinehome.commands.HomeCommand;
-import com.mcfine.mcfinehome.commands.HomeofCommand;
-import com.mcfine.mcfinehome.commands.SethomeCommand;
+import com.mcfine.mcfinehome.commands.*;
 import com.mcfine.mcfinehome.data.Home;
 import com.mcfine.mcfinehome.tasks.SaveTask;
 import com.mcfine.mcfinehome.utils.HomeStorage;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
+import me.kodysimpson.simpapi.heads.SkullCreator;
+import me.kodysimpson.simpapi.menu.MenuManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -40,12 +40,13 @@ public final class McfineHome extends JavaPlugin implements Listener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        MenuManager.setup(getServer(), this);
         Objects.requireNonNull(getCommand("home")).setExecutor(new HomeCommand());
         Objects.requireNonNull(getCommand("home")).setTabCompleter(new TabCompletion());
         Objects.requireNonNull(getCommand("sethome")).setExecutor(new SethomeCommand());
         Objects.requireNonNull(getCommand("delhome")).setExecutor(new DelhomeCommand());
         Objects.requireNonNull(getCommand("home-of")).setExecutor(new HomeofCommand());
+        getCommand("homes").setExecutor(new HomesCommand());
         getServer().getPluginManager().registerEvents(this, this);
         new SaveTask(plugin).runTaskTimerAsynchronously(plugin, 1200L, 3600L);
         getLogger().info("Plugin started");

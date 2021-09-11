@@ -171,6 +171,19 @@ public class HomeStorage {
 
     }
 
+    public static ArrayList<Home> getHomeSet() {
+        return homeSet;
+    }
+
+    public static ArrayList<String> getHomeNamesList(String name){
+        ArrayList<String> list= new ArrayList<>();
+        for(Home hm:homeSet){
+            if(hm.getPlayerName().equalsIgnoreCase(name)) {
+                list.add(hm.getHomeName());
+            }
+        }
+        return list;
+    }
 
     public static void saveHome() throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -182,7 +195,7 @@ public class HomeStorage {
         gson.toJson(homeSet,writer);
         writer.flush();
         writer.close();
-        McfineHome.getPlugin().getLogger().info("Data saved");
+        //McfineHome.getPlugin().getLogger().info("Data saved");
     }
 
 

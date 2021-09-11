@@ -6,6 +6,8 @@ authors: [ Alexey ]
 description: Home plugin with invite option
 website: mcfine.ru
 commands:
+  homes:
+    description: Открывает меню
   home:
     description: Телепортирует вас домой.
     aliases:
