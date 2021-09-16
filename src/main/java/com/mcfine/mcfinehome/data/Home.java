@@ -147,5 +147,29 @@ public class Home {
     public void setWorld(String world) {
         this.world = world;
     }
+
+    public boolean invitePlayer(String playerName){
+        if(this.invitedNames.contains(playerName))return false;
+        else{
+            this.invitedNames.add(playerName);
+            return true;
+        }
+    }
+
+    public boolean uninvitePlayer(String playerName){
+        if(!this.invitedNames.contains(playerName))return false;
+        else{
+            this.invitedNames.remove(playerName);
+            return true;
+        }
+    }
+
+    public boolean setPublic(boolean pub){
+        if(this.publ==pub) return false;
+        else{
+            this.publ=pub;
+            return true;
+        }
+    }
 }
 

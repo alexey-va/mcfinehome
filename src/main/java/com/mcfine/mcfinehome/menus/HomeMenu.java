@@ -19,7 +19,7 @@ public class HomeMenu extends Menu {
 
     @Override
     public String getMenuName() {
-        return McfineHome.getPlugin().getConfig().getString("home-menu-name");
+        return "Настройка: "+playerMenuUtility.getData("chosenMenu");
     }
 
     @Override

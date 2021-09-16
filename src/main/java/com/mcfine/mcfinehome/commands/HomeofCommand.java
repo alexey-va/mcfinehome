@@ -17,52 +17,39 @@ public class HomeofCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
-        if(sender instanceof Player){
-            Player p = (Player)sender;
-            if(args.length>=1 && args[0].trim().equalsIgnoreCase(p.getName())){
+        if (sender instanceof Player) {
+            Player p = (Player) sender;
+            if (args.length >= 1 && args[0].trim().equalsIgnoreCase(p.getName())) {
                 p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &eplaceholder"));
                 return false;
             }
-            if(args.length==1){
-                Home hm = HomeStorage.getHomeByName(args[0].toLowerCase(Locale.ROOT).trim(),"Main");
-                if(Objects.isNull(hm)){
-                    hm = HomeStorage.getAnyHomeByName(args[0].trim());
-                    if(Objects.isNull(hm)) {
-                        p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &cУ игрока нет дома"));
-                    } else {
-                        if(hm.isPubl() || hm.isInvited(p.getName())){
-                            try {
-                                if(Teleporter.tryTp(p, hm.getLocation())) {
-                                    p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &eВы телепортировались в дом: &6" + hm.getHomeName() + " &eигрока: &6" + hm.getPlayerName()));
-                                }
-                            } catch(Exception ex) {
-                                ex.printStackTrace();
-                            }
-                        }
-                    }
-                } else{
-                    if(hm.isPubl() || hm.isInvited(p.getName())){
+            if (args.length == 1) {
+                Home hm = HomeStorage.getHome(args[0].trim(), "Main");
+                if (Objects.isNull(hm)) {
+                    p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &cУ игрока нет дома"));
+                } else {
+                    if (hm.isPubl() || hm.isInvited(p.getName())) {
                         try {
-                            if(Teleporter.tryTp(p, hm.getLocation())) {
+                            if (Teleporter.tryTp(p, hm.getLocation())) {
                                 p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &eВы телепортировались в дом: &6" + hm.getHomeName() + " &eигрока: &6" + hm.getPlayerName()));
                             }
-                        } catch(Exception ex) {
+                        } catch (Exception ex) {
                             ex.printStackTrace();
                         }
-                    } else{
+                    } else {
                         p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &eВы не приглашены в этот дом"));
                     }
                 }
-            } else if(args.length==2){
-                Home hm = HomeStorage.getHomeByName(args[0].toLowerCase(Locale.ROOT).trim(),args[1].toLowerCase(Locale.ROOT).trim());
-                if(Objects.isNull(hm)){
+            } else if (args.length == 2) {
+                Home hm = HomeStorage.getHome(args[0].trim(), args[1].trim());
+                if (Objects.isNull(hm)) {
                     p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &cУ игрока нет такого дома"));
-                } else{
-                    if(hm.isPubl() || hm.isInvited(p.getName())){
+                } else {
+                    if (hm.isPubl() || hm.isInvited(p.getName())) {
                         try {
                             Teleporter.tryTp(p, hm.getLocation());
-                            p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &eВы телепортировались в дом: &6"+hm.getHomeName()+" &eигрока: &6"+hm.getPlayerName()));
-                        } catch(Exception ex) {
+                            p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &eВы телепортировались в дом: &6" + hm.getHomeName() + " &eигрока: &6" + hm.getPlayerName()));
+                        } catch (Exception ex) {
                             ex.printStackTrace();
                         }
                     }

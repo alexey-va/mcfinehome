@@ -16,8 +16,8 @@ import java.util.*;
 public class TabCompletion implements TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        if(sender instanceof Player) {
-            Player p =(Player)sender;
+        if (sender instanceof Player) {
+            Player p = (Player) sender;
             if (args.length == 1) {
                 List<String> suggest = new ArrayList<>();
 
@@ -31,34 +31,18 @@ public class TabCompletion implements TabCompleter {
                 suggest.add("private");
                 Player[] players = new Player[Bukkit.getServer().getOnlinePlayers().size()];
                 Bukkit.getServer().getOnlinePlayers().toArray(players);
-                for (Player pl : players) {
-                    try {
-                        if ((HomeStorage.getAnyHomeByName(pl.getName())).getInvitedNames().contains(p.getName())) {
-                            suggest.add(pl.getName());
-                        }
-                    } catch (NullPointerException ex){
-
-                    }
-                }
                 return suggest;
             } else if (args.length == 2 && args[0].toLowerCase(Locale.ROOT).trim().equals("uninvite")) {
-                List<String> suggest;
-                try {
-                    suggest = Objects.requireNonNull(HomeStorage.getAnyHomeByName(p.getName())).getInvitedNames();
-                } catch(NullPointerException ex){
-                    return null;
+                List<String> suggest = null;
+                Home main = HomeStorage.getHome(p.getName(), "Main");
+                if (main != null) {
+                    suggest = main.getInvitedNames();
                 }
                 return suggest;
-            } else if(args.length==2 && args[0].toLowerCase(Locale.ROOT).trim().equals("delete")){
+            } else if (args.length == 2 && args[0].toLowerCase(Locale.ROOT).trim().equals("delete")) {
                 List<String> suggest = new ArrayList<>();
-                ArrayList<Home> homes;
-                homes=HomeStorage.getHomeListName(p.getName());
-                if(Objects.nonNull(homes)){
-                    for(Home hm:homes){
-                        suggest.add(hm.getHomeName());
-                    }
-                    return suggest;
-                }
+                ArrayList<String> homes = HomeStorage.getHomeNamesList(p.getName());
+                return homes;
             }
         }
 

@@ -1,6 +1,7 @@
 package com.mcfine.mcfinehome.utils;
 
 import com.mcfine.mcfinehome.McfineHome;
+import com.mcfine.mcfinehome.data.Home;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -8,7 +9,40 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+
 public class Teleporter {
+
+    public static int tryTpAny(Player p){
+        ArrayList<Home> homeList = HomeStorage.getHomeList(p.getName());
+        if(homeList == null || homeList.size()==0) return 0;
+        else{
+
+            Home main = null;
+            for(Home home : homeList){
+                if(home.getHomeName().equalsIgnoreCase("main")){
+                    main = home;
+                    break;
+                }
+            }
+            if(main != null) {
+                if (isSafe(main.getLocation())) {
+                    p.teleportAsync(main.getLocation());
+                    p.sendMessage(ColorTranslator.translateColorCodes("Телепортация к главному дому"));
+                    return 1;
+                }
+            }
+
+            for(Home home : homeList){
+                if(isSafe(home.getLocation())){
+                    p.teleportAsync(home.getLocation());
+                    p.sendMessage(ColorTranslator.translateColorCodes("Телепортация к "+home.getHomeName()));
+                    return 1;
+                }
+            }
+        }
+        return -1;
+    }
 
     public static boolean tryTp(Player p, Location loc){
         if(!isSafe(loc)){
