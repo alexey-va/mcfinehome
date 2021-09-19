@@ -83,12 +83,12 @@ public final class McfineHome extends JavaPlugin implements Listener {
                     HomeStorage.replaceHome(p.getUniqueId().toString(), new Home(loc.getX(), loc.getY(), loc.getZ(),
                             p.getLocation().getYaw(), p.getLocation().getPitch(), "bed", p.getUniqueId().toString(), p.getName(),
                             new ArrayList<>(), loc.getWorld().getName(), false), "bed");
-                    p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &6Дом привязанный к кровати перемещен. Используйте &9/home bed"));
+                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &6Дом привязанный к кровати перемещен. Используйте &9/home bed"));
                 } else {
                     HomeStorage.putHome(p.getName().toLowerCase(),new Home(loc.getX(), loc.getY(), loc.getZ(),
                             p.getLocation().getYaw(), p.getLocation().getPitch(), "bed", p.getUniqueId().toString(), p.getName(),
                             new ArrayList<>(), loc.getWorld().getName(), false));
-                    p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &6Дом привязанный к кровати установлен. Используйте &9/home bed"));
+                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &6Дом привязанный к кровати установлен. Используйте &9/home bed"));
                 }
             }
         }
@@ -99,7 +99,7 @@ public final class McfineHome extends JavaPlugin implements Listener {
         Player p = ev.getPlayer();
         ArrayList<Home> homeList = HomeStorage.getHomeList(p.getName());
         if(homeList.size()==0){
-            p.sendMessage(ColorTranslator.translateColorCodes("У вас ноль домов"));
+            p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &cУ вас нет дома &6:("));
         }
         if(homeList==null){
             return;
@@ -115,30 +115,30 @@ public final class McfineHome extends JavaPlugin implements Listener {
             }
             if(main != null){
                 if(Teleporter.isSafe(main.getLocation())) {
-                    p.sendMessage(ColorTranslator.translateColorCodes("Вы возродились дома"));
+                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &aВы возродились у себя дома"));
                     ev.setRespawnLocation(main.getLocation());
                     return;
                 } else{
-                    p.sendMessage(ColorTranslator.translateColorCodes("Ваш главный дом небезопасен"));
+                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &cВаш основной дом небезопасен"));
                 }
             }
             if(bed != null){
                 if(Teleporter.isSafe(bed.getLocation())) {
-                    p.sendMessage(ColorTranslator.translateColorCodes("Вы возродились дома"));
+                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &aВы возродились у себя дома"));
                     ev.setRespawnLocation(bed.getLocation());
                     return;
                 } else{
-                    p.sendMessage(ColorTranslator.translateColorCodes("Ваш дом у кровати небезопасен"));
+                    //p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &cВаш дом небезопасен"));
                 }
             }
             if(any != null){
                 for(Home home : homeList){
                     if(Teleporter.isSafe(home.getLocation())) {
-                        p.sendMessage(ColorTranslator.translateColorCodes("Вы возродились дома"));
+                        p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &aВы возродились дома"));
                         ev.setRespawnLocation(home.getLocation());
                         return;
                     } else{
-                        p.sendMessage(ColorTranslator.translateColorCodes("Ваш дом "+home.getHomeName()+" кровати небезопасен"));
+                        //p.sendMessage(ColorTranslator.translateColorCodes("Ваш дом "+home.getHomeName()+" кровати небезопасен"));
                     }
                 }
             }

@@ -2,17 +2,20 @@ package com.mcfine.mcfinehome.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.mcfine.mcfinehome.McfineHome;
 import com.mcfine.mcfinehome.data.Home;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.units.qual.A;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class HomeStorage {
 
-    private static Map<String, ArrayList<Home>> homeSet = new HashMap<>();
+    private static ConcurrentHashMap<String, ArrayList<Home>> homeSet = new ConcurrentHashMap<>();
 
     public static boolean createHome(Player player, String homeName) {
         if (homeSet.containsKey(player.getName().toLowerCase())) {
@@ -82,11 +85,11 @@ public class HomeStorage {
         else return homeSet.get(playerName.toLowerCase());
     }
 
-    public static ArrayList<String> getHomeNamesList(String playerName){
+    public static ArrayList<String> getHomeNamesList(String playerName) {
         if (!homeSet.containsKey(playerName.toLowerCase())) return null;
-        else{
+        else {
             ArrayList<String> names = new ArrayList<>();
-            for(Home home : homeSet.get(playerName.toLowerCase())){
+            for (Home home : homeSet.get(playerName.toLowerCase())) {
                 names.add(home.getHomeName());
             }
             return names;
@@ -96,29 +99,42 @@ public class HomeStorage {
     public static boolean deleteHome(String playerName, String homeName) {
         if (!homeSet.containsKey(playerName.toLowerCase())) return false;
         else {
-            boolean isRemoved = false;
-            for (Home home : homeSet.get(playerName.toLowerCase())) {
-                if (home.getHomeName().equalsIgnoreCase(homeName)) {
-                    homeSet.get(playerName.toLowerCase()).remove(home);
-                    isRemoved = true;
+            ArrayList<Home> tmp = homeSet.get(playerName.toLowerCase());
+            int index=-1;
+            for(int i=0;i<tmp.size();i++){
+                if(tmp.get(i).getHomeName().equalsIgnoreCase(homeName)){
+                    index = i;
+                    break;
                 }
             }
-            return isRemoved;
+            if(index==-1){
+                return false;
+            }
+            tmp.remove(index);
+            homeSet.replace(playerName.toLowerCase(), tmp);
+            return true;
         }
     }
 
     public static boolean replaceHome(String playerName, Home newHome, String homeName) {
-        if (!homeSet.containsKey(playerName)) return false;
+        if (!homeSet.containsKey(playerName.toLowerCase())) return false;
         else {
-            for (Home home : homeSet.get(playerName.toLowerCase())) {
-                if (home.getHomeName().equals(homeName.toLowerCase())) {
-                    homeSet.get(playerName.toLowerCase()).remove(home);
-                    homeSet.get(playerName.toLowerCase()).add(newHome);
-                    return true;
+            ArrayList<Home> tmp = homeSet.get(playerName.toLowerCase());
+            int index=-1;
+            for(int i=0;i<tmp.size();i++){
+                if(tmp.get(i).getHomeName().equalsIgnoreCase(homeName)){
+                    index = i;
+                    break;
                 }
             }
+            if(index==-1){
+                return false;
+            }
+            tmp.remove(index);
+            tmp.add(newHome);
+            homeSet.replace(playerName.toLowerCase(), tmp);
+            return true;
         }
-        return false;
     }
 
 
@@ -146,9 +162,10 @@ public class HomeStorage {
         if (file.exists()) {
             Reader reader = new FileReader(file);
 
-            Map<String, ArrayList<Home>> map = new HashMap<String, ArrayList<Home>>();
-            map = (Map<String, ArrayList<Home>>) gson.fromJson(reader, map.getClass());
-            homeSet = map;
+            ConcurrentHashMap<String, ArrayList<Home>> plsHelp = new ConcurrentHashMap<>();
+            Type listType = new TypeToken<ConcurrentHashMap<String, ArrayList<Home>>>() {
+            }.getType();
+            homeSet = gson.fromJson(reader, listType);
             McfineHome.getPlugin().getLogger().info("Data uploaded");
         }
     }

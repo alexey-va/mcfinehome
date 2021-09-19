@@ -28,7 +28,7 @@ public class Teleporter {
             if(main != null) {
                 if (isSafe(main.getLocation())) {
                     p.teleportAsync(main.getLocation());
-                    p.sendMessage(ColorTranslator.translateColorCodes("Телепортация к главному дому"));
+                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &уВы переместились в ваш дом"));
                     return 1;
                 }
             }
@@ -36,7 +36,7 @@ public class Teleporter {
             for(Home home : homeList){
                 if(isSafe(home.getLocation())){
                     p.teleportAsync(home.getLocation());
-                    p.sendMessage(ColorTranslator.translateColorCodes("Телепортация к "+home.getHomeName()));
+                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &уВы переместились в ваш дом: &6"+home.getHomeName()));
                     return 1;
                 }
             }
@@ -83,7 +83,7 @@ public class Teleporter {
             // returns if the ground is solid or not.
             return ground.getType().isSolid();
         } catch (Exception err) {
-            McfineHome.getPlugin().getLogger().info("Not safe");
+            McfineHome.getPlugin().getLogger().info("Safe check exception");
         }
         return false;
     }
