@@ -20,35 +20,35 @@ public class HomeofCommand implements CommandExecutor {
         if (sender instanceof Player) {
             Player p = (Player) sender;
             if (args.length >= 1 && args[0].trim().equalsIgnoreCase(p.getName())) {
-                p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &cЭто же вы!"));
+                p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cЭто же вы!"));
                 return false;
             }
             if (args.length == 1) {
                 Home hm = HomeStorage.getHome(args[0].trim(), "Main");
                 if (Objects.isNull(hm)) {
-                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &cУ игрока нет дома"));
+                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cУ игрока нет дома"));
                 } else {
                     if (hm.isPubl() || hm.isInvited(p.getName())) {
                         try {
                             if (Teleporter.tryTp(p, hm.getLocation())) {
-                                p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &eВы телепортировались в дом: &6" + hm.getHomeName() + " &eигрока: &6" + hm.getPlayerName()));
+                                p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &eВы телепортировались в дом: &6" + hm.getHomeName() + " &eигрока: &6" + hm.getPlayerName()));
                             }
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
                     } else {
-                        p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &eВы не приглашены в этот дом"));
+                        p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &eВы не приглашены в этот дом"));
                     }
                 }
             } else if (args.length == 2) {
                 Home hm = HomeStorage.getHome(args[0].trim(), args[1].trim());
                 if (Objects.isNull(hm)) {
-                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &cУ игрока нет такого дома"));
+                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cУ игрока нет такого дома"));
                 } else {
                     if (hm.isPubl() || hm.isInvited(p.getName())) {
                         try {
                             Teleporter.tryTp(p, hm.getLocation());
-                            p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &eВы телепортировались в дом: &6" + hm.getHomeName() + " &eигрока: &6" + hm.getPlayerName()));
+                            p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &eВы телепортировались в дом: &6" + hm.getHomeName() + " &eигрока: &6" + hm.getPlayerName()));
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }

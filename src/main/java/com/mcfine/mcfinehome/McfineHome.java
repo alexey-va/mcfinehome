@@ -6,7 +6,6 @@ import com.mcfine.mcfinehome.tasks.SaveTask;
 import com.mcfine.mcfinehome.utils.HomeStorage;
 import com.mcfine.mcfinehome.utils.Teleporter;
 import me.kodysimpson.simpapi.colors.ColorTranslator;
-import me.kodysimpson.simpapi.heads.SkullCreator;
 import me.kodysimpson.simpapi.menu.MenuManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -14,12 +13,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Objects;
 
 public final class McfineHome extends JavaPlugin implements Listener {
@@ -48,7 +45,10 @@ public final class McfineHome extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("sethome")).setExecutor(new SethomeCommand());
         Objects.requireNonNull(getCommand("delhome")).setExecutor(new DelhomeCommand());
         Objects.requireNonNull(getCommand("home-of")).setExecutor(new HomeofCommand());
-        getCommand("homes").setExecutor(new HomesCommand());
+        getCommand("home-of").setTabCompleter(new homeofTabCompletion());
+        if(getConfig().getInt("maxNumberOfHomes")>2) {
+            getCommand("homes").setExecutor(new HomesCommand());
+        }
         getServer().getPluginManager().registerEvents(this, this);
         new SaveTask(plugin).runTaskTimerAsynchronously(plugin, 1200L, 3600L);
         getLogger().info("Plugin started");
@@ -97,6 +97,7 @@ public final class McfineHome extends JavaPlugin implements Listener {
     @EventHandler
     public void onRespawn(PlayerRespawnEvent ev) {
         Player p = ev.getPlayer();
+
         ArrayList<Home> homeList = HomeStorage.getHomeList(p.getName());
         if(homeList.size()==0){
             p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &cУ вас нет дома &6:("));
@@ -115,7 +116,7 @@ public final class McfineHome extends JavaPlugin implements Listener {
             }
             if(main != null){
                 if(Teleporter.isSafe(main.getLocation())) {
-                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &aВы возродились у себя дома"));
+                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &2Вы возродились у себя дома"));
                     ev.setRespawnLocation(main.getLocation());
                     return;
                 } else{
@@ -124,7 +125,7 @@ public final class McfineHome extends JavaPlugin implements Listener {
             }
             if(bed != null){
                 if(Teleporter.isSafe(bed.getLocation())) {
-                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &aВы возродились у себя дома"));
+                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &2Вы возродились у себя дома"));
                     ev.setRespawnLocation(bed.getLocation());
                     return;
                 } else{
@@ -134,7 +135,7 @@ public final class McfineHome extends JavaPlugin implements Listener {
             if(any != null){
                 for(Home home : homeList){
                     if(Teleporter.isSafe(home.getLocation())) {
-                        p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &aВы возродились дома"));
+                        p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &2Вы возродились у себя дома"));
                         ev.setRespawnLocation(home.getLocation());
                         return;
                     } else{

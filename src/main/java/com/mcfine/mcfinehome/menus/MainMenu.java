@@ -11,6 +11,7 @@ import me.kodysimpson.simpapi.heads.SkullCreator;
 import me.kodysimpson.simpapi.menu.Menu;
 import me.kodysimpson.simpapi.menu.MenuManager;
 import me.kodysimpson.simpapi.menu.PlayerMenuUtility;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -50,7 +51,7 @@ public class MainMenu extends Menu {
         Player p = playerMenuUtility.getOwner();
         switch (e.getCurrentItem().getType()) {
             case PAPER:
-                HomeCommand.printWhoInvitedMe(p);
+                HomeCommand.printWhoinvites(p);
                 break;
             case RED_TERRACOTTA:
                 p.performCommand("home");
@@ -59,6 +60,10 @@ public class MainMenu extends Menu {
                 String action = e.getCurrentItem().getItemMeta().getPersistentDataContainer().get(new NamespacedKey(McfineHome.getPlugin(), "menuAction"), PersistentDataType.STRING);
                 if (action.equals("close")) {
                     p.closeInventory();
+                }
+                else if(action.equals("back")){
+                    String commandBack = McfineHome.getPlugin().getConfig().getString("back-command");
+                    p.performCommand(commandBack);
                 }
                 break;
             case BLUE_TERRACOTTA:
@@ -94,11 +99,16 @@ public class MainMenu extends Menu {
                 homes.add(0, main);
             }
             for (Home hm : homes) {
-                ItemStack homeItem = makeItem(Material.BLUE_TERRACOTTA, ColorTranslator.translateColorCodes("&6&l" + hm.getHomeName()),
-                        ColorTranslator.translateColorCodes(" &7▪ &eКоординаты: &6X:" + (int)hm.getX() + "  Y:" + (int)hm.getY() + "  Z:" + (int)hm.getZ()),
-                        hm.isPubl() ? ColorTranslator.translateColorCodes(" &7▪ &eПубличный: &6Да") : ColorTranslator.translateColorCodes(" &7▪ &eПубличный: &6Нет"));
+                String hmName = hm.getHomeName();
+                if(hmName.equalsIgnoreCase("Main")) hmName="Главный дом";
+                ItemStack homeItem = makeItem(Material.BLUE_TERRACOTTA, ColorTranslator.translateColorCodes("&6" + hmName),
+                        hm.isPubl() ? ColorTranslator.translateColorCodes(" &e⬩ &eПубличный: &aДа") : ColorTranslator.translateColorCodes(" &7⬩ &eПубличный: &cНет"),
+                        ColorTranslator.translateColorCodes(" &7⬩ &eX: &a" + (int)hm.getX()+"  &eY: &a" + (int)hm.getY()+"  &eZ: &a" + (int)hm.getZ()),
+                        ColorTranslator.translateColorCodes(" "),
+                        ColorTranslator.translateColorCodes(" &7(Нажмите для телепортации)"));
                 ItemMeta meta = homeItem.getItemMeta();
                 meta.getPersistentDataContainer().set(new NamespacedKey(McfineHome.getPlugin(), "homeName"), PersistentDataType.STRING, hm.getHomeName());
+                //homeItem.lore()
                 homeItem.setItemMeta(meta);
                 if (hm.getHomeName().equals("Main")) homeItem.setType(Material.RED_TERRACOTTA);
                 inventory.setItem(loc, homeItem);
@@ -108,19 +118,36 @@ public class MainMenu extends Menu {
                 if (loc >= 9 * (rows - 1) - 2) break;
             }
         }
-
-        for (int i = 10 + homeNames.size(); i < (rows - 1) * 9 - 1; i++) {
+        int tmp =0;
+        if(Objects.nonNull(homeNames)) tmp = homeNames.size();
+        for (int i = 10 + tmp; i < (rows - 1) * 9 - 1; i++) {
             if ((i + 1) % 9 == 0 || (i + 1) % 9 == 1) continue;
-            ItemStack noHome = makeItem(Material.GREEN_STAINED_GLASS_PANE, ColorTranslator.translateColorCodes(" "));
+            ItemStack noHome = makeItem(Material.BLUE_STAINED_GLASS_PANE, ColorTranslator.translateColorCodes(" "));
             inventory.setItem(i, noHome);
         }
         ItemStack close = SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTJkN2E3NTFlYjA3MWUwOGRiYmM5NWJjNWQ5ZDY2ZTVmNTFkYzY3MTI2NDBhZDJkZmEwM2RlZmJiNjhhN2YzYSJ9fX0=");
-        close.getItemMeta().setLocalizedName(ColorTranslator.translateColorCodes("&9&lВыход"));
         ItemMeta meta = close.getItemMeta();
+        meta.setDisplayName(ColorTranslator.translateColorCodes("&8Выход"));
         meta.getPersistentDataContainer().set(new NamespacedKey(McfineHome.getPlugin(), "menuAction"), PersistentDataType.STRING, "close");
         close.setItemMeta(meta);
+
+        boolean backButton = McfineHome.getPlugin().getConfig().getBoolean("back-button");
+        if(backButton) {
+            ItemStack back = SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjllYTFkODYyNDdmNGFmMzUxZWQxODY2YmNhNmEzMDQwYTA2YzY4MTc3Yzc4ZTQyMzE2YTEwOThlNjBmYjdkMyJ9fX0=");
+            ItemMeta backMeta = back.getItemMeta();
+            backMeta.setDisplayName(ColorTranslator.translateColorCodes("&8Назад"));
+            backMeta.getPersistentDataContainer().set(new NamespacedKey(McfineHome.getPlugin(), "menuAction"), PersistentDataType.STRING, "back");
+            back.setItemMeta(backMeta);
+
+            inventory.setItem(rows * 9 - 9, back);
+        }
         inventory.setItem(rows * 9 - 5, close);
-
-
+        ItemStack decor = makeItem(Material.OAK_LEAVES, " ");
+        inventory.setItem(rows * 9 - 4,decor);
+        inventory.setItem(rows * 9 - 6,decor);
     }
+
+    //public ItemStack createHomeItem(Home home, Player p){
+        //ItemStack item = makeItem()
+    //}
 }

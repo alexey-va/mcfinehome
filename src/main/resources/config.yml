@@ -1,8 +1,10 @@
 publicByDeafult: false
 bedSetsHome: true
 onlyBedSetsHome: false
-maxNumberOfHomes: 10
-menu-name: '                &9&lДома'
-#may be from 1 to 6!!!
-row-amount: 4
-home-menu-name: '&6&l               Меню Дома'
+maxNumberOfHomes: 1
+menu-name: '&8&m----------&r &8&lДома &8&m---------'
+#may be from 3 to 6!!!
+row-amount: 3
+back-button: true
+back-command: 'tmenu'
+home-menu-name: '&8&m---------&r &8&lМеню Дома &8&m---------'

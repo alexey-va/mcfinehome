@@ -28,7 +28,7 @@ public class Teleporter {
             if(main != null) {
                 if (isSafe(main.getLocation())) {
                     p.teleportAsync(main.getLocation());
-                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &уВы переместились в ваш дом"));
+                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &2Вы переместились в ваш дом"));
                     return 1;
                 }
             }
@@ -36,7 +36,7 @@ public class Teleporter {
             for(Home home : homeList){
                 if(isSafe(home.getLocation())){
                     p.teleportAsync(home.getLocation());
-                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7▪ &уВы переместились в ваш дом: &6"+home.getHomeName()));
+                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &2Вы переместились в ваш дом: &6"+home.getHomeName()));
                     return 1;
                 }
             }
@@ -44,16 +44,43 @@ public class Teleporter {
         return -1;
     }
 
+    public static int tryTpAny(Player p, boolean bypass){
+        ArrayList<Home> homeList = HomeStorage.getHomeList(p.getName());
+        if(homeList == null || homeList.size()==0) return 0;
+        else{
+
+            Home main = null;
+            for(Home home : homeList){
+                if(home.getHomeName().equalsIgnoreCase("main")){
+                    main = home;
+                    break;
+                }
+            }
+            if(main != null) {
+                    p.teleportAsync(main.getLocation());
+                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &2Вы переместились в ваш дом"));
+                    return 1;
+            }
+
+            for(Home home : homeList){
+                    p.teleportAsync(home.getLocation());
+                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &2Вы переместились в ваш дом: &6"+home.getHomeName()));
+                    return 1;
+            }
+        }
+        return 0;
+    }
+
     public static boolean tryTp(Player p, Location loc){
         if(!isSafe(loc)){
-            p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &cНебезопасная локация"));
+            p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7» &cНебезопасная локация"));
             return false;
         }
         try {
             p.teleportAsync(loc);
             return true;
         } catch(Exception ex){
-            p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7▪ &cПроизошла ошибка"));
+            p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7» &cПроизошла ошибка"));
         }
 
         return false;

@@ -12,11 +12,15 @@ public class SethomeCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if(sender instanceof Player) {
+            String[] args2 = new String[args.length+1];
+            args2[0] = "set";
             for (int i = 0, argsLength = args.length; i < argsLength; i++) {
-                args[i]=args[i].toLowerCase(Locale.ROOT).trim();
+                args2[i+1]=args[i].toLowerCase(Locale.ROOT).trim();
             }
-            HomeCommand.setHome((Player)sender,args);
+
+            HomeCommand.setHome((Player)sender,args2);
         }
         return false;
     }
+
 }
