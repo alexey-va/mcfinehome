@@ -4,7 +4,6 @@ main: com.mcfine.mcfinehome.McfineHome
 api-version: 1.16
 authors: [ Alexey ]
 description: Home plugin with invite option
-depend: [ProtocolLib]
 website: mcfine.ru
 commands:
   homes:

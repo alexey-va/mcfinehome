@@ -66,30 +66,56 @@ public class HomeCommand implements CommandExecutor {
                     makeHomePublic(p, false, "Main");
                     return false;
                 }
+                if (args[0].equalsIgnoreCase("invited")){
+                    Home hm = HomeStorage.getHome(p.getName(),"Main");
+                    if (Objects.isNull(hm)) {
+                        p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cУ вас нет дома!"));
+                        return false;
+                    }
+                    StringBuilder homesBuilder = new StringBuilder("&9Дом &7» &eК вам приглашены: &7");
+                    boolean any = false;
+                    ArrayList<String> players = hm.getInvitedNames();
+                    for (String invitee : players) {
+                        if (invitee == null) continue;
+                        //StringBuilder currentBuilder = new StringBuilder(array.get(0).getPlayerName() + ", ");
+                        //String currentPlayer = currentBuilder.toString();
+                        //currentPlayer = currentPlayer.substring(0, currentPlayer.length() - 2);
+                        homesBuilder.append(invitee+"&e, &7");
+                        any = true;
+                    }
+
+                    if (any) {
+                        String result = homesBuilder.toString();
+                        p.sendMessage(ColorTranslator.translateColorCodes(result.substring(0, result.length() - 4)));
+                    } else {
+                        p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cВы еще никого не пригласили!"));
+                    }
+                    return false;
+                }
                 if (args[0].equalsIgnoreCase("invites")) {
                     printWhoinvites(p);
                     return false;
                 }
 
-                ArrayList<Home> homeList = HomeStorage.getHomeList(p.getName());
+                /*ArrayList<Home> homeList = HomeStorage.getHomeList(p.getName());
                 if (HomeStorage.containsHome(p.getName(), args[0].trim())) {
                     Home home = HomeStorage.getHome(p.getName(), args[0].trim());
                     Teleporter.tryTp(p, home.getLocation());
                     return false;
-                }
+                }*/
 
                 Home home = HomeStorage.getHome(args[0].trim(), "Main");
                 if (Objects.isNull(home)) {
-                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cУ этого игрока нет дома &7( &f"+args[0]+"&7 )"));
+                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cУ этого игрока нет дома &7(&f"+args[0]+"&7)."));
                     return false;
                 }
                 if (home.isPubl() || home.isInvited(p.getName()) || p.hasPermission("mcfinehome.admin")) {
                     if (Teleporter.tryTp(p, home.getLocation())) {
                         if (home.getHomeName().equalsIgnoreCase("Main")) {
-                            p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &eВы дома у &6" + home.getPlayerName()));
+                            p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &eВы дома у &6" + home.getPlayerName()+"."));
                             return false;
                         }
-                        p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &eВы телепортировались в дом &6" + home.getPlayerName()));
+                        p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &eВы телепортировались в дом &6" + home.getPlayerName()+"."));
                     }
                 } else {
                     p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cИгрок &6" + home.getPlayerName()+" &cне приглашал вас к себе домой!"));
@@ -99,7 +125,7 @@ public class HomeCommand implements CommandExecutor {
             } else if (args.length == 2) {
                 if (args[0].equalsIgnoreCase("set")) {
                     if(McfineHome.getPlugin().getConfig().getInt("maxNumberOfHomes")<2){
-                        p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cНеверный синтаксис &7(/home set)"));
+                        p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cНеверный синтаксис. &7Введите &f/home help &7для справки."));
                         return false;
                     }
                     setHome(p, args);
@@ -125,9 +151,30 @@ public class HomeCommand implements CommandExecutor {
                     makeHomePublic(p, false, args[1].trim());
                     return false;
                 }
+                if(args[1].equalsIgnoreCase("confirm")) {
+                    Home home = HomeStorage.getHome(args[0].trim(), "Main");
+                    if (Objects.isNull(home)) {
+                        p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cУ этого игрока нет дома &7(&f" + args[0] + "&7)."));
+                        return false;
+                    }
+                    if (home.isPubl() || home.isInvited(p.getName()) || p.hasPermission("mcfinehome.admin")) {
+                        if (Teleporter.tryTp(p, home.getLocation(), true)) {
+                            if (home.getHomeName().equalsIgnoreCase("Main")) {
+                                p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &eВы дома у &6" + home.getPlayerName()+"&e."));
+                                return false;
+                            }
+                            p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &eВы телепортировались в дом &6" + home.getPlayerName()+"&e."));
+                        }
+                    } else {
+                        p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cИгрок &6" + home.getPlayerName() + " &cне приглашал вас к себе домой!"));
+                    }
+                    return false;
+                }
+                p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cНеверная команда. &7Введите &f/home help &7для справки."));
+
             } else if (args.length == 3) {
                 if(McfineHome.getPlugin().getConfig().getInt("maxNumberOfHomes")<2){
-                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cНеверный синтаксис &7( &f/home help &7)"));
+                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cНеверный синтаксис. &7Введите &f/home help &7для справки."));
                     return false;
                 }
                 if (args[0].equalsIgnoreCase("rename")) {
@@ -135,7 +182,7 @@ public class HomeCommand implements CommandExecutor {
                     return false;
                 }
             } else {
-                p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cНеверный синтаксис &7( &f/home help &7)"));
+                p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cНеверный синтаксис команды! &7Введите &f/home help &7для справки."));
             }
 
 
@@ -147,15 +194,15 @@ public class HomeCommand implements CommandExecutor {
     public static void delHome(Player p, String[] args) {
         if (args.length == 1) {
             if (HomeStorage.deleteHome(p.getName(), "Main"))
-                p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &eДом удален"));
-            else p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cУ вас нет главного дома"));
-        } else if (args.length == 2) {
+                p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &eДом удален успешно. &7Введите &f/home set &7для установки нового."));
+            else p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cУ вас нет дома. &7Введите &f/home set &7для установки дома."));
+        } /*else if (args.length == 2) {
             Home home = HomeStorage.getHome(p.getName(), args[1]);
             if (HomeStorage.deleteHome(p.getName(), args[1]))
                 p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &eДом &6" + args[1] + " &eудален"));
             else p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cНе верное имя дома"));
-        } else {
-            p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cСлишком много аргументов"));
+        }*/ else {
+            p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cСлишком много аргументов. &7Введите &f/home help &7для справки."));
         }
     }
 
@@ -176,23 +223,25 @@ public class HomeCommand implements CommandExecutor {
                 }
                 p.setBedSpawnLocation(home.getLocation(),true);
                 p.setCompassTarget(home.getLocation());
-                p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &6Ваш дом перемещен на это место"));
+                p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &6Ваш дом перемещен на данное место."));
             } else {
                 if (HomeStorage.createHome(p, "Main")) {
                     Home main = HomeStorage.getHome(p.getName(), "Main");
                     if (main != null) {
                         p.setBedSpawnLocation(main.getLocation(),true);
                         p.setCompassTarget(main.getLocation());
-                        p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &2Точка дома установлена!"));
+                        p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &2Точка дома установлена! &7Введите &f/home &7для телепортации."));
                     } else {
-                        p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cОшибка при установке дома"));
+                        p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cОшибка при установке дома."));
                     }
                 } else {
-                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cОшибка в установке дома"));
+                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cОшибка в установке дома."));
                 }
             }
         } else if (args.length == 2) {
-            int max = 1;
+            p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cНеверный синтаксис. &7Введите &f/home help &7для справки."));
+            return;
+            /*int max = 1;
             for (int i = Math.max(McfineHome.getPlugin().getConfig().getInt("maxNumberOfHomes"), 32); i >= 0; i--) {
                 if (p.hasPermission("mcfine.home." + i)) {
                     max = i;
@@ -221,21 +270,21 @@ public class HomeCommand implements CommandExecutor {
                 }
             } else {
                 p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cУ вас максимальное число домов. Удалите один командой /home delete <имя>"));
-            }
+            }*/
         }
     }
 
     public static void printWhoinvites(Player p) {
         Map<String, ArrayList<Home>> tmp = HomeStorage.getHomeSet();
         Collection<ArrayList<Home>> pHomeList = tmp.values();
-        StringBuilder homesBuilder = new StringBuilder("&9Дом &7» &eВы приглашены к: &6");
+        StringBuilder homesBuilder = new StringBuilder("&9Дом &7» &eВы приглашены к: &7");
         boolean any = false;
         ArrayList<String> players = new ArrayList<>();
 
         for (ArrayList<Home> array : pHomeList) {
             if (array == null) continue;
             boolean anyCurrent = false;
-            StringBuilder currentBuilder = new StringBuilder(array.get(0).getPlayerName() + ", ");
+            StringBuilder currentBuilder = new StringBuilder(array.get(0).getPlayerName() + "&e, &7");
             for (Home home : array) {
                 if (home == null) continue;
                 if (home.isInvited(p.getName())) {
@@ -244,7 +293,7 @@ public class HomeCommand implements CommandExecutor {
             }
             if (anyCurrent) {
                 String currentPlayer = currentBuilder.toString();
-                currentPlayer = currentPlayer.substring(0, currentPlayer.length() - 2);
+                currentPlayer = currentPlayer.substring(0, currentPlayer.length() - 4);
                 homesBuilder.append(currentPlayer);
                 any = true;
             }
@@ -254,7 +303,7 @@ public class HomeCommand implements CommandExecutor {
             String result = homesBuilder.toString();
             p.sendMessage(ColorTranslator.translateColorCodes(result));
         } else {
-            p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cВас еще никто не пригласил"));
+            p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cВас еще никто не пригласил."));
         }
     }
 
@@ -279,7 +328,10 @@ public class HomeCommand implements CommandExecutor {
                 if (main.invitePlayer(args[1].trim())) {
                     Player invitedPlayer = McfineHome.getPlugin().getServer().getPlayer(args[1].trim());
                     if (invitedPlayer != null && invitedPlayer.getName().equalsIgnoreCase(args[1])) {
+                        p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &6Вы пригласили игрока &e"+invitedPlayer.getName()+" &6к себе домой!"));
                         invitedPlayer.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &6Вы были приглашены к &e" + p.getName() + " &6домой"));
+                    } else if(invitedPlayer == null){
+                        p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &6Вы пригласили игрока &e"+args[1]+" &6к себе домой!"));
                     }
                 } else {
                     p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &6Игрок уже приглашен!"));
@@ -287,7 +339,7 @@ public class HomeCommand implements CommandExecutor {
             } else {
                 p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cУ вас нет главного дома!"));
             }
-        } else if (args.length == 3) {
+        } /*else if (args.length == 3) {
             if (args[2].trim().equalsIgnoreCase(p.getName()))
                 p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cЭто ваш ник!"));
             if (HomeStorage.containsHome(p.getName(), args[1].trim())) {
@@ -303,8 +355,8 @@ public class HomeCommand implements CommandExecutor {
             } else {
                 p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cУ вас нет дома с таким именем"));
             }
-        } else {
-            p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cСлишком много аргументов"));
+        }*/ else {
+            p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cСлишком много аргументов. &7Введите &f/home help &7для справки."));
         }
     }
 
@@ -325,7 +377,7 @@ public class HomeCommand implements CommandExecutor {
             } else {
                 p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cУ вас нет дома!"));
             }
-        } else if (args.length == 3) {
+        } /*else if (args.length == 3) {
             if (args[2].trim().equalsIgnoreCase(p.getName()))
                 p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &6Это ваш ник!"));
             if (HomeStorage.containsHome(p.getName(), args[1].trim())) {
@@ -341,24 +393,25 @@ public class HomeCommand implements CommandExecutor {
             } else {
                 p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cУ вас нет такого дома!"));
             }
-        } else {
-            p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cСлишком много аргументов!"));
+        }*/ else {
+            p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cСлишком много аргументов! &7Введите &f/home help &7для справки."));
         }
     }
 
     public static void helpShow(Player p) {
-        p.sendMessage(ColorTranslator.translateColorCodes("&8&l&m------------------------------------------"));
+        p.sendMessage(ColorTranslator.translateColorCodes("&8&l&m------------------&8&l<&r&3&l Дома &8&l>&8&l&m------------------"));
         p.sendMessage(ColorTranslator.translateColorCodes("&9/home                   &6-  &6Телепортироваться домой"));
         p.sendMessage(ColorTranslator.translateColorCodes("&9/home set              &6-  &6Установить точку дома"));
-        p.sendMessage(ColorTranslator.translateColorCodes("&9/home invite [Ник]     &6-  &6Пригласить домой"));
-        p.sendMessage(ColorTranslator.translateColorCodes("&9/home uninvite [Ник]  &6-  &6Удалить из приглашенных"));
-        p.sendMessage(ColorTranslator.translateColorCodes("&9/home [Ник]             &6-  &6Телепортироваться в дом игрока"));
+        p.sendMessage(ColorTranslator.translateColorCodes("&9/home invite &7<Ник>     &6-  &6Пригласить домой"));
+        p.sendMessage(ColorTranslator.translateColorCodes("&9/home uninvite &7<Ник>  &6-  &6Удалить из приглашенных"));
+        p.sendMessage(ColorTranslator.translateColorCodes("&9/home &7<Ник>            &6-  &6Телепортироваться в дом игрока"));
         p.sendMessage(ColorTranslator.translateColorCodes("&9/home delete           &6-  &6Удалить точку дома"));
-        p.sendMessage(ColorTranslator.translateColorCodes("&9/home invited          &6-  &6Посмотреть список приглашенных"));
+        p.sendMessage(ColorTranslator.translateColorCodes("&9/home invited           &6-  &6Посмотреть список приглашенных"));
+        p.sendMessage(ColorTranslator.translateColorCodes("&9/home invites           &6-  &6Кто меня пригласил"));
         p.sendMessage(ColorTranslator.translateColorCodes("&9/home public           &6-  &6Сделать дом общедоступным"));
         p.sendMessage(ColorTranslator.translateColorCodes("&9/home private         &6-  &6Сделать дом приватным"));
         p.sendMessage(ColorTranslator.translateColorCodes("&9/home help             &6-  &6Получить информацию о плагине"));
-        p.sendMessage(ColorTranslator.translateColorCodes("&8&l&m------------------------------------------"));
+        p.sendMessage(ColorTranslator.translateColorCodes("&8&l&m-------------------------------------------"));
     }
 
     public static void makeHomePublic(Player player, boolean publ, String homeName) {
@@ -367,15 +420,15 @@ public class HomeCommand implements CommandExecutor {
             if (home.setPublic(publ)) {
                 HomeStorage.replaceHome(player.getName(), home, home.getHomeName());
                 if (publ) {
-                    player.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &6Дом сделан &6публичным!"));
+                    player.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &6Ваш дом теперь &aпубличный!"));
                 } else {
-                    player.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &6Дом сделан &6закрытым!"));
+                    player.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &6Ваш дом теперь &cприватный!"));
                 }
             } else {
                 if (publ) {
-                    player.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &6Дом и так публичный!"));
+                    player.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cДом уже является публичным!"));
                 } else {
-                    player.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &6Дом и так закрытый!"));
+                    player.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cДом и так является приватным!"));
                 }
             }
         } else {

@@ -72,15 +72,32 @@ public class Teleporter {
     }
 
     public static boolean tryTp(Player p, Location loc){
+        if(loc==null) McfineHome.getPlugin().getLogger().info("Location is null");
         if(!isSafe(loc)){
-            p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7» &cНебезопасная локация"));
+            p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cНебезопасная локация. &7Используйте &9/home <имя> confirm &7чтобы проигнорировать."));
             return false;
         }
         try {
             p.teleportAsync(loc);
             return true;
         } catch(Exception ex){
-            p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7» &cПроизошла ошибка"));
+            p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cПроизошла ошибка"));
+        }
+
+        return false;
+    }
+
+    public static boolean tryTp(Player p, Location loc, boolean bypass){
+        if(loc==null) McfineHome.getPlugin().getLogger().info("Location is null");
+        /*if(!isSafe(loc)){
+            p.sendMessage(ColorTranslator.translateColorCodes("&9Home &7» &cНебезопасная локация"));
+            return false;
+        }*/
+        try {
+            p.teleportAsync(loc);
+            return true;
+        } catch(Exception ex){
+            p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cПроизошла ошибка"));
         }
 
         return false;

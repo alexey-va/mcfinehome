@@ -41,6 +41,24 @@ public class HomeofCommand implements CommandExecutor {
                     }
                 }
             } else if (args.length == 2) {
+                if(args[1].equalsIgnoreCase("confirm")){
+                    Home hm = HomeStorage.getHome(args[0].trim(), "Main");
+                    if (Objects.isNull(hm)) {
+                        p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cУ игрока нет дома"));
+                    } else {
+                        if (hm.isPubl() || hm.isInvited(p.getName()) || p.hasPermission("mcfinehome.admin")) {
+                            try {
+                                if (Teleporter.tryTp(p, hm.getLocation(), true)) {
+                                    p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &eВы телепортировались в дом: &6" + hm.getHomeName() + " &eигрока: &6" + hm.getPlayerName()));
+                                }
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        } else {
+                            p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &eВы не приглашены в этот дом"));
+                        }
+                    }
+                }
                 Home hm = HomeStorage.getHome(args[0].trim(), args[1].trim());
                 if (Objects.isNull(hm)) {
                     p.sendMessage(ColorTranslator.translateColorCodes("&9Дом &7» &cУ игрока нет такого дома"));

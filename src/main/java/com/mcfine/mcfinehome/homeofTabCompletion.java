@@ -28,11 +28,16 @@ public class homeofTabCompletion implements TabCompleter {
                     if (array == null) continue;
                     for (Home home : array) {
                         if (home == null) continue;
-                        if ((home.isInvited(p.getName()) || home.isPubl() || p.hasPermission("mcfinehome.admin"))&& (home.getPlayerName().contains(args[0]))) {
+                        if ((home.isInvited(p.getName()) || home.isPubl() || p.hasPermission("mcfinehome.admin"))&& (home.getPlayerName().toLowerCase().contains(args[0].toLowerCase()))) {
                             suggest.add(home.getPlayerName());
                         }
                     }
                 }
+                return suggest;
+            }
+            else if (args.length == 1){
+                List<String> suggest = new ArrayList<>();
+                suggest.add("confirm");
                 return suggest;
             }
         }
